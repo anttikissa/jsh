@@ -39,10 +39,14 @@ In JSX you must comment out code with `{/* ... */}`. JSH allows regular `<!-- HT
 
 ## Identifiers are like in HTML
 
-    <label for="name">Name:</label>         <!-- instead of htmlFor -->
+	<label for="name">Name:</label>         <!-- instead of htmlFor -->
 	<p class="important"></p>               <!-- instead of className -->
 	<button onclick={}>Click me</button>    <!-- instead of onClick -->
 
+## Style attribute works like in HTML
+
+	<div style="border-bottom: 5px red">    <!-- instead of <p style={{ borderBottom: '5px solid red' }}> -->
+ 
 ## Whitespace treated as in HTML (no need for {" "})
 
 	function Heading() {
@@ -65,7 +69,7 @@ Since this behavior is not always required, we should have a way to avoid it - m
  
 ## As a bonus, components could also accept an array instead of an object
 
-	// @jsx h
+	// @jsh h
 
 	<!-- Object props, as supported by JSX -->
  	<Component x="one" y="two" /> <!-- h(Component, { x: "one", y: "two" }) -->
@@ -81,3 +85,46 @@ This might enable some patterns that would require a superfluous prop in JSX, su
 	</If>
  	<!-- h(If, [path == "/"], h(Then, null, "Then do this"), h(Else, null, "or else")) -->
   
+## Configuring defaults
+
+This would set the default behavior to not generate whitespace between elements:
+
+	// @jsh !nospace
+
+	function Example(name) {
+ 		return (
+   			<p>
+	  			<img src="pic.png">
+	  			<span>{name}</span>
+	  		</p>
+	 	)
+   		<!-- equivalent to: <p><img src="pic.png"><span>{name}</span></p> -->
+ 	}
+
+But you could override it with !space (and vice versa)
+
+  	function Another(name) {
+   		return (
+	 		<p !space>
+				<img src="pic.png">
+				<span>{name}</span>
+			</p>
+		)
+  		<!-- equivalent to: <p> <img src="pic.png"> <span>{name}</span> </p> -->
+   	}
+
+## Don't React.createElement by default
+
+JSH content uses the `jsh` function by default; if you wish to use things like React.createElement you could use:
+
+	import { createElement as jsh } from 'react'
+	function F() { return <h1 className="bg-red-500">hello</h1> }
+
+ To make use of `class`, `for`, etc. in React apps you could use a compatibility function:
+
+ 	import { jsh } from '@jshtml/react-compat'
+  	function F() { return <h1 class="bg-red-500">hello</h1> }
+
+## Note to self
+
+Check out this (or the modern equivalent) for more: https://legacy.reactjs.org/docs/dom-elements.html
